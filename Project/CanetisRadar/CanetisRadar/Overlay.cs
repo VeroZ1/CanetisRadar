@@ -39,9 +39,11 @@ namespace CanetisRadar
         {
             InitializeComponent();
         }
-
+        private OverlayDX overlayDX;
+        
         private void Overlay_Load(object sender, EventArgs e)
         {
+            new OverlayNotifyIcon().Init();
             this.TransparencyKey = Color.Turquoise;
             this.BackColor = Color.Turquoise;
 
@@ -58,6 +60,10 @@ namespace CanetisRadar
 
             Thread t = new Thread(Loop);
             t.Start();
+            new Thread(delegate() {
+                overlayDX = new OverlayDX();
+                overlayDX.Run();
+            }).Start();
         }
 
         // -------------------------------------------------------
@@ -70,7 +76,7 @@ namespace CanetisRadar
 
             if (device.AudioMeterInformation.PeakValues.Count < 8)
             {
-                MessageBox.Show("You are not using 7.1 audio device! Please look again at setup guide.", "No 7.1 audio detected!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("您没有使用 7.1 音频设备！请再次查看设置指南。", "未检测到 7.1 音频！", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(-1);
             }
 
@@ -130,11 +136,12 @@ namespace CanetisRadar
         {
             Bitmap radar = new Bitmap(150, 150);
             Graphics grp = Graphics.FromImage(radar);
-            grp.FillRectangle(Brushes.Black, 0, 0, radar.Width, radar.Height);
+            grp.FillEllipse(Brushes.Black, 0, 0, radar.Width, radar.Height);
 
-            grp.FillRectangle(Brushes.Red, x - 5, y - 5, 10, 10);
+            grp.FillEllipse(Brushes.Red, x - 5, y - 5, 10, 10);
 
             pictureBox1.Invoke((MethodInvoker)delegate {
+                pictureBox1.SizeMode = PictureBoxSizeMode.AutoSize;
                 pictureBox1.Image = radar;
             });
         }
