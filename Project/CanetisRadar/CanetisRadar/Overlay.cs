@@ -39,7 +39,6 @@ namespace CanetisRadar
         {
             InitializeComponent();
         }
-        private OverlayDX overlayDX;
         
         private void Overlay_Load(object sender, EventArgs e)
         {
@@ -60,10 +59,6 @@ namespace CanetisRadar
 
             Thread t = new Thread(Loop);
             t.Start();
-            new Thread(delegate() {
-                overlayDX = new OverlayDX();
-                overlayDX.Run();
-            }).Start();
         }
 
         // -------------------------------------------------------
